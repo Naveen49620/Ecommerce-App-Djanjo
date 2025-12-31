@@ -1,0 +1,47 @@
+{% extends 'shop/layouts/main.html' %}
+
+{% block content %}
+<section class="bg-light py-4 my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h4 class="mb-3">Favourite Items</h4>
+        <hr style="border: none; border-top: 2px solid #b8bfc2;">
+      </div>
+    </div>
+
+    {% if fav %}
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in fav %}
+            <tr>
+              <td><img src="{{ item.product.product_image.url }}" alt="{{ item.product.name }}" width="80"></td>
+              <td>{{ item.product.name }}</td>
+              <td>₹{{ item.product.selling_price }}</td>
+              <td>
+                <a href="{% url 'remove_fav' item.id %}" onclick="return confirm('Are you sure you want to remove this?')">
+                  <button class="btn btn-danger btn-sm">Delete</button>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+      <p>Your favourites list is empty.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

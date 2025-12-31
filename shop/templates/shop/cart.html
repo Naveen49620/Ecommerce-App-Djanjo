@@ -1,0 +1,136 @@
+{% extends 'shop/layouts/main.html' %}
+
+{% block content %}
+<section class="bg-light py-4 my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h4 class="mb-3">Cart Items</h4>
+        <hr style="border: none; border-top: 2px solid #b8bfc2;">
+      </div>
+    </div>
+
+    {% if cart %}
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Total</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart %}
+<tr data-item-id="{{ item.id }}">
+  <td><img src="{{ item.product.product_image.url }}" alt="{{ item.product.name }}" width="80"></td>
+  <td>{{ item.product.name }}</td>
+  <td>₹{{ item.product.selling_price }}</td>
+  <td>
+    <div class="input-group" style="max-width:120px;">
+      <button class="btn btn-outline-secondary btn-sm btnMinus">-</button>
+      <input type="text" class="form-control text-center txtQty" value="{{ item.product_qty }}" readonly>
+      <button class="btn btn-outline-secondary btn-sm btnPlus">+</button>
+    </div>
+  </td>
+  <td class="itemTotal" data-price="{{ item.product.selling_price }}">
+    ₹{{ item.product.selling_price|floatformat:2 }}
+  </td>
+  <td>
+    <!-- ✅ Updated delete button -->
+    <button class="btn btn-danger btn-sm btnDelete" data-pid="{{ item.product.id }}">Delete</button>
+  </td>
+</tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="text-end"><strong>Grand Total:</strong></td>
+              <td colspan="2" id="grandTotal">₹0.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    {% else %}
+      <p>Your cart is empty.</p>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  function updateGrandTotal() {
+    let grandTotal = 0;
+    document.querySelectorAll(".itemTotal").forEach(function(item) {
+      grandTotal += parseFloat(item.innerText.replace("₹","")) || 0;
+    });
+    document.getElementById("grandTotal").innerText = "₹" + grandTotal.toFixed(2);
+  }
+
+  // Handle qty +/-
+  document.querySelectorAll("tr[data-item-id]").forEach(function(row) {
+    const minusBtn = row.querySelector(".btnMinus");
+    const plusBtn  = row.querySelector(".btnPlus");
+    const qtyInput = row.querySelector(".txtQty");
+    const itemTotal = row.querySelector(".itemTotal");
+    const price = parseFloat(itemTotal.getAttribute("data-price"));
+
+    function updateTotal() {
+      const qty = parseInt(qtyInput.value);
+      itemTotal.innerText = "₹" + (qty * price).toFixed(2);
+      updateGrandTotal();
+    }
+
+    plusBtn.addEventListener("click", function() {
+      qtyInput.value = parseInt(qtyInput.value) + 1;
+      updateTotal();
+    });
+
+    minusBtn.addEventListener("click", function() {
+      let qty = parseInt(qtyInput.value);
+      if (qty > 1) {
+        qtyInput.value = qty - 1;
+        updateTotal();
+      }
+    });
+
+    updateTotal(); // initial row total
+  });
+
+  // Handle delete
+  document.querySelectorAll(".btnDelete").forEach(button => {
+    button.addEventListener("click", function () {
+      let pid = this.dataset.pid;
+
+      fetch("/delete-cart/", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ 'pid': pid })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data['status']);
+        if (data['status'] === "Deleted") {
+          this.closest("tr").remove();
+          updateGrandTotal();
+        }
+      });
+    });
+  });
+
+  updateGrandTotal();
+});
+</script>
+
+{% endblock %}

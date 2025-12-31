@@ -1,0 +1,46 @@
+ .carousel-item img{
+    overflow: hidden;
+    object-fit: cover;
+    height: 60vh;
+    object-position: top;
+} 
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+.card {
+    height: 100%;
+}
+
+
+
+.original_price {
+    font-weight: bold;
+    color: rgb(193, 31, 31) !important;
+}
+
+.selling_price {
+    font-weight: bold;
+    color: rgb(245, 249, 245) !important;
+    background-color: rgb(17, 125, 17) !important;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.pic-box{
+    position: relative;
+}
+.hot{
+    background-color: orangered;
+    color: white;
+    width: 50px;
+    text-align: center;
+    font-weight: bold;
+    display: inline;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    z-index: 10px;
+}
