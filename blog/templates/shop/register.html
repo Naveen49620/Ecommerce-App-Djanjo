@@ -1,0 +1,26 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- Correct way to load CSS -->
+    <link rel="stylesheet" href="{% static 'css/hi.css' %}">
+
+</head>
+<body>
+    <p class="register">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni provident consectetur a iste</p>
+
+    <!-- Correct way to load images -->
+    <img style="width: 200px;" src="{% static 'images/javascript.jpg' %}" alt="">
+    <img style="width: 200px;" src="{% static 'images/cofee.png' %}" alt="">
+    
+    <h1>hi</h1>
+
+    <button class="btn btn-danger">button</button>
+</body>
+</html>
+
